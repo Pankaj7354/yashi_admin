@@ -3,7 +3,6 @@
 
 <head>
     <link rel="stylesheet" href="{{asset('adminlte/dist/css/adminlte.css')}}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
 </head>
 
@@ -49,10 +48,11 @@
         <span class="text-danger">{{ $message }}</span>
     @enderror
 
-    <!-- Verify Email Button -->
+    {{-- <!-- Verify Email Button -->
     <div class="mb-2">
         <button type="button" id="sendOtpBtn" class="btn btn-info">Send OTP</button>
     </div>
+
 
     <div class="input-group mb-1" id="otpSection" style="display: none;">
         <div class="form-floating">
@@ -62,7 +62,7 @@
         <div class="input-group-text">
             <span class="bi bi-key"></span>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Password -->
     <div class="input-group mb-1">
@@ -94,52 +94,50 @@
         </div>
     </div>
 </form>
-
-<!-- Load jQuery before this -->
-<script>
+{{-- <script>
     $(document).ready(function () {
         $('#sendOtpBtn').on('click', function () {
-    const email = $('#registerEmail').val();
+            const email = $('#registerEmail').val();
 
-    if (!email) {
-        alert('Please enter your email first.');
-        return;
-    }
-
-    $('#sendOtpBtn').prop('disabled', true).text('Sending...');
-
-    $.ajax({
-        url: '{{ route("auth.sendOtp") }}',
-        method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            email: email
-        },
-        success: function (res) {
-            if (res.success) {
-                alert('OTP sent to your email.');
-
-                // ✅ Show and make OTP field required
-                $('#otpSection').fadeIn(() => {
-                    $('#otp').prop('required', true).focus(); // focus optional
-                });
-
-                $('#submitFormButton').prop('disabled', false);
-            } else {
-                alert(res.message || 'Failed to send OTP.');
+            if (!email) {
+                alert('कृपया पहले ईमेल दर्ज करें।');
+                return;
             }
-        },
-        error: function (xhr) {
-            alert(xhr.responseJSON?.message || 'Something went wrong.');
-        },
-        complete: function () {
-            $('#sendOtpBtn').prop('disabled', false).text('Send OTP');
-        }
+
+            $('#sendOtpBtn').prop('disabled', true).text('Sending...');
+
+            $.ajax({
+                url: '{{ route("auth.sendOtp") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    email: email
+                },
+                success: function (res) {
+                    if (res.success) {
+                        alert('OTP आपके ईमेल पर भेजा गया है।');
+
+                        // ✅ OTP इनपुट को दिखाएं
+                        $('#otpSection').show(); // या .fadeIn() अगर smooth चाहिए
+                        $('#otpSection').css('display', 'flex');
+                        $('#otp').prop('required', true).focus();
+
+                        $('#submitFormButton').prop('disabled', false);
+                    } else {
+                        alert(res.message || 'OTP भेजने में समस्या आई।');
+                    }
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON?.message || 'कुछ गलत हो गया।');
+                },
+                complete: function () {
+                    $('#sendOtpBtn').prop('disabled', false).text('Send OTP');
+                }
+            });
+        });
     });
-});
-    }
-);
-</script>
+</script> --}}
+
 
 
                 
@@ -160,6 +158,7 @@
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="{{ asset('js/app.js') }}"></script> <!-- Laravel specific script file -->
 </body>

@@ -23,22 +23,23 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'otp' => 'required|string',
+            // 'otp' => 'required|string',
             'password' => 'required|string|confirmed|min:6',
-            'role' => 'user', // or 'admin', 'super_admin'
+
+            // 'role' => 'user', // or 'admin', 'super_admin'
 
         ]);
 
         // Optional: Match OTP stored in session or database
-        $otpRecord = Otp::where('email', $request->email)
-            ->where('otp', $request->otp)
-            ->where('expires_at', '>', now()) // Make sure it's still valid
-            ->latest()
-            ->first();
+        // $otpRecord = Otp::where('email', $request->email)
+        //     ->where('otp', $request->otp)
+        //     ->where('expires_at', '>', now()) // Make sure it's still valid
+        //     ->latest()
+        //     ->first();
 
-        if (!$otpRecord) {
-            return back()->withErrors(['otp' => 'Invalid or expired OTP.']);
-        }
+        // if (!$otpRecord) {
+        //     return back()->withErrors(['otp' => 'Invalid or expired OTP.']);
+        // }
 
         User::create([
             'name' => $request->name,
@@ -46,7 +47,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $otpRecord->delete(); // Optional
+        // $otpRecord->delete(); // Optional
 
         return redirect()->route('auth.login')->with('success', 'Registration successful. Please login.');
     }
@@ -64,7 +65,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/index'); // Redirect to dashboard or home page
+            return redirect()->intended('/'); // Redirect to dashboard or home page
         }
 
         return back()->withErrors([

@@ -4,10 +4,10 @@ use App\Http\Controllers\admin\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OtpsendController;
 
-Route::get('/', function () {
-    return view('admin_access.index
-    ');
-});
+// Route::get('/', function () {
+//     return view('admin_access.index
+//     ');
+// });
 
 // Grouping routes with 'auth' prefix and middleware
 Route::group([
@@ -25,16 +25,16 @@ Route::group([
         Route::match(['get', 'post'], '/login', [AuthController::class, 'login'])->name('login');
 
         // Forgot Password Form
-        Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot.form');
-        Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('forgot.send');
+        // Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('forgot.form');
+        // Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('forgot.send');
 
         // Reset Password (with token)
-        Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('reset.form');
-        Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.perform');
+        // Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('reset.form');
+        // Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.perform');
 
         // OTP Verification Routes
-        Route::post('/send-otp', [OtpsendController::class, 'sendOtp'])->name('sendOtp');
-        Route::post('/verify-otp', [OtpsendController::class, 'verifyOtp'])->name('verifyOtp');  // Verify OTP
+        // Route::post('/send-otp', [OtpsendController::class, 'sendOtp'])->name('sendOtp');
+        // Route::post('/verify-otp', [OtpsendController::class, 'verifyOtp'])->name('verifyOtp');  // Verify OTP
     });
 
     // Authenticated-only routes (users already logged in)
@@ -43,3 +43,4 @@ Route::group([
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
+__DIR__ . 'users.php';

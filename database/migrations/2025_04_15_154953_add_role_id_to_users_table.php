@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->string('role')->default('user'); // roles: user, admin, super_admin
-
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
         });
     }
 
