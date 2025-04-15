@@ -4,9 +4,9 @@ use App\Http\Controllers\admin\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OtpsendController;
 
-
 Route::get('/', function () {
-    return view('admin_access.index');
+    return view('admin_access.index
+    ');
 });
 
 // Grouping routes with 'auth' prefix and middleware
@@ -34,7 +34,7 @@ Route::group([
 
         // OTP Verification Routes
         Route::post('/send-otp', [OtpsendController::class, 'sendOtp'])->name('sendOtp');
-        Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verifyOtp');  // Verify OTP
+        Route::post('/verify-otp', [OtpsendController::class, 'verifyOtp'])->name('verifyOtp');  // Verify OTP
     });
 
     // Authenticated-only routes (users already logged in)

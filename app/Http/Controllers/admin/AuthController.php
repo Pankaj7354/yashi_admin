@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use App\Models\User;
+use App\Models\{User, Otp};
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -17,25 +17,39 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         if ($request->isMethod('get')) {
-            return view('admin_access.layouts.register'); // Return view for registration
+            return view('admin_access.layouts.register');
         }
 
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'otp' => 'required|string',
             'password' => 'required|string|confirmed|min:6',
+            'role' => 'user', // or 'admin', 'super_admin'
+
         ]);
 
-        // Create user
+        // Optional: Match OTP stored in session or database
+        $otpRecord = Otp::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->where('expires_at', '>', now()) // Make sure it's still valid
+            ->latest()
+            ->first();
+
+        if (!$otpRecord) {
+            return back()->withErrors(['otp' => 'Invalid or expired OTP.']);
+        }
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('admin_access.layouts.login')->with('success', 'Registration successful. Please login.');
-    }
+        $otpRecord->delete(); // Optional
 
+        return redirect()->route('auth.login')->with('success', 'Registration successful. Please login.');
+    }
     // Show Login Form & Handle Login
     public function login(Request $request)
     {
@@ -50,7 +64,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard'); // Redirect to dashboard or home page
+            return redirect()->intended('/index'); // Redirect to dashboard or home page
         }
 
         return back()->withErrors([

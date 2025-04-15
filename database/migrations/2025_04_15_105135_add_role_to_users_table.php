@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('otps', function (Blueprint $table) {
-            $table->id();
-            $table->string('email');
-            $table->string('otp');
-            $table->timestamp('expires_at');
+        Schema::table('users', function (Blueprint $table) {
+            //
+            $table->string('role')->default('user'); // roles: user, admin, super_admin
 
-            $table->timestamps();
         });
     }
 
@@ -26,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('otps');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

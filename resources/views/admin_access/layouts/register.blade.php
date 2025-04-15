@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" href="{{asset('adminlte/dist/css/adminlte.css')}}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
 </head>
 
 <body class="register-page bg-body-secondary">
@@ -53,13 +54,14 @@
         <button type="button" id="sendOtpBtn" class="btn btn-info">Send OTP</button>
     </div>
 
-    <!-- OTP Input -->
     <div class="input-group mb-1" id="otpSection" style="display: none;">
         <div class="form-floating">
-            <input id="otp" name="otp" type="text" class="form-control" placeholder="Enter OTP" required>
+            <input id="otp" name="otp" type="text" class="form-control" placeholder="Enter OTP">
             <label for="otp">OTP</label>
         </div>
-        <div class="input-group-text"> <span class="bi bi-key"></span> </div>
+        <div class="input-group-text">
+            <span class="bi bi-key"></span>
+        </div>
     </div>
 
     <!-- Password -->
@@ -87,48 +89,58 @@
     <div class="row">
         <div class="col-12">
             <div class="d-grid gap-12">
-                <button type="submit" id="submitFormButton" class="btn btn-primary" disabled>Sign Up</button>
+                <button type="submit" id="submitFormButton" class="btn btn-primary" >Sign Up</button>
             </div>
         </div>
     </div>
 </form>
 
+<!-- Load jQuery before this -->
 <script>
     $(document).ready(function () {
         $('#sendOtpBtn').on('click', function () {
-            let email = $('#registerEmail').val();
+    const email = $('#registerEmail').val();
 
-            if (!email) {
-                alert('Please enter an email first.');
-                return;
+    if (!email) {
+        alert('Please enter your email first.');
+        return;
+    }
+
+    $('#sendOtpBtn').prop('disabled', true).text('Sending...');
+
+    $.ajax({
+        url: '{{ route("auth.sendOtp") }}',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            email: email
+        },
+        success: function (res) {
+            if (res.success) {
+                alert('OTP sent to your email.');
+
+                // ✅ Show and make OTP field required
+                $('#otpSection').fadeIn(() => {
+                    $('#otp').prop('required', true).focus(); // focus optional
+                });
+
+                $('#submitFormButton').prop('disabled', false);
+            } else {
+                alert(res.message || 'Failed to send OTP.');
             }
-
-            $.ajax({
-                url: '{{ route("auth.sendOtp") }}',
-                type: 'POST',
-                dataType: 'json',
-                data: JSON.stringify({ email: email }),
-                contentType: 'application/json',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.status === 'success') {
-                        alert('OTP sent to your email!');
-                        $('#otpSection').show();
-                        $('#submitFormButton').prop('disabled', false);
-                    } else {
-                        alert(response.message || 'Failed to send OTP. Please try again.');
-                    }
-                },
-                error: function (xhr) {
-                    let res = xhr.responseJSON;
-                    alert(res.message || 'Something went wrong.');
-                }
-            });
-        });
+        },
+        error: function (xhr) {
+            alert(xhr.responseJSON?.message || 'Something went wrong.');
+        },
+        complete: function () {
+            $('#sendOtpBtn').prop('disabled', false).text('Send OTP');
+        }
     });
+});
+    }
+);
 </script>
+
 
                 
                 
